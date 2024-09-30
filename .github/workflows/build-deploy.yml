@@ -5,7 +5,7 @@ name : Build and Deploy
 on: [push, pull_request]
 
 jobs:
-  job1:
+  build:
     runs-on: ubuntu-latest
     env:
       DATABASE_HOSTNAME: ${{secrets.DATABASE_HOSTNAME}}
@@ -46,6 +46,7 @@ jobs:
         run: |
           pip install pytest
           pytest
+      
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -62,3 +63,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ vars.DOCKERHUB_USERNAME }}/fastapi:latest
+  deploy:
+    needs: [] # by default github run jobs in parrallel, we add this section so the deploy job wait until the build job is first
+    steps:
+      - name: depoly test 
+        run: echo "Test the deploy Job"
